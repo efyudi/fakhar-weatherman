@@ -1,9 +1,8 @@
+import csv
 import sys
 import os
 import getopt
 from colorama import Fore
-import csv
-
 monthDictionary = {1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May",
                    6: "Jun", 7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
 
@@ -23,14 +22,12 @@ unitsDictionary = {1: "C", 2: "C", 3: "C", 4: "C", 5: "C", 6: "C", 7: "%", 8: "%
 
 
 class WeatherReadings:
-    # this will require 16 more variables.
+
     def __init__(self, day, month, year, separated_readings):
         self.attributes = []
         self.day = day
         self.month = month
         self.year = year
-        # Trying to experiment with different approaches and what works best
-        # Will use a loop here for appending all 23 values
         for i in range(0, len(separated_readings)):
             self.attributes.append(separated_readings[i])
 
@@ -113,20 +110,18 @@ class WeatherCalculations:
         """ Function to Print calculated readings (Debugging Purposes) """
         day = weather_readings[recorded_month][entry_in_file].day
         month = int(weather_readings[recorded_month][entry_in_file].month)
-        print(whatToFindDictionary[index] + " : " + str(value) + unitsDictionary[index] +
-              " on " + monthDictionary[month] + " " + day)
+        print("{} : {}{} on {} {}".format(whatToFindDictionary[index], str(
+            value), unitsDictionary[index], monthDictionary[month], day))
 
     @staticmethod
     def check_max(old_max, value):
         """ Find Max """
-        old_max = value if value > old_max else old_max
-        return old_max
+        return value if value > old_max else old_max
 
     @staticmethod
     def check_min(old_min, value):
         """ Find Min """
-        old_min = value if value < old_min else old_min
-        return old_min
+        return value if value < old_min else old_min
 
     def calculate_highest_reading(self, weather_readings, index):
         """ Function will find MAX of what is specified, based on the index passed """
@@ -138,7 +133,8 @@ class WeatherCalculations:
         for month in range(0, len(
                 weather_readings)):
             for entry in range(0, len(weather_readings[month])):
-                if weather_readings[month][entry].attributes[index] == "":  # if empty, skips
+                # if empty, skips
+                if weather_readings[month][entry].attributes[index] == "":
                     continue
                 else:
                     returned_max = self.check_max(find_max, int(
@@ -164,6 +160,7 @@ class WeatherCalculations:
         entry_in_file_min = 0
         for month in range(0, len(weather_readings)):
             for entry in range(0, len(weather_readings[month])):
+                # if empty, Skips
                 if weather_readings[month][entry].attributes[index] == "":
                     continue
                 else:
@@ -231,10 +228,9 @@ class WeatherCalculations:
         avgmax_temp, avgmin_temp = self.calculate_mean_temperature(
             weather_readings)
         mean_avg_humidity = self.calculate_mean_humidity(weather_readings)
-        print("Average Highest Temperature : " + str(int(avgmax_temp)) + "C")
-        print("Average Lowest Temperature : " + str(int(avgmin_temp)) + "C")
-        print("Mean Average Humidity : " + str(int(mean_avg_humidity)) + "%")
-
+        print("Average Highest Temperature : {}C".format(str(int(avgmax_temp))))
+        print("Average Lowest Temperature : {}C".format(str(int(avgmin_temp))))
+        print("Mean Average Humidity : {}%".format(str(int(mean_avg_humidity))))
         # LINES OF CODE TO MAKE REPORT OF AVERAGE TEMPERATURE/HUMIDITY
         # readings = {"Average Highest Temperature": int(avgmax_temp), "Average Lowest Temperature": int(
         #    avgmin_temp), "Mean Average Humidity": int(mean_avg_humidity)}
@@ -249,7 +245,7 @@ def search_files(path, arguments):
     mentioned_date = arguments.split(
         '/') if '/' in arguments else arguments  # Parsing MONTH AND YEAR if Provided
     # Joining the Year Mentioned in File Naming Format
-    year = "".join(mentioned_date[0] + "_" + monthDictionary[int(mentioned_date[1])]
+    year = "".join("{}_{}".format(mentioned_date[0], monthDictionary[int(mentioned_date[1])])
                    ) if isinstance(mentioned_date, list) else mentioned_date
     # List every file in the mentioned directory
     for file in os.listdir(path):
